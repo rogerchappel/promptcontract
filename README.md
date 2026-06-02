@@ -1,76 +1,63 @@
-# PromptContract
-
-PromptContract validates prompt markdown files with YAML frontmatter contracts.
-It checks that each prompt declares its inputs, outputs, examples, and risk
-boundaries, then verifies that `{{placeholders}}` in the prompt body are covered
-by the contract and examples.
-
+# promptcontract
+Local-first prompt contract lint and validation CLI.
 ## Status
 
-This repository is early-stage. Confirm the current support, release, and
-security posture before using it in production.
+This is a v0.1.0 local-first developer tool. Treat the CLI and output formats as early-stage, pin versions in automation, and run the verification commands below before relying on it in CI.
+## What it helps with
 
-## Install
+- Work with prompt, lint, cli, contracts, ai workflows from a local checkout.
+- Keep generated artifacts and reports inspectable on disk instead of sending project data to a service.
+- Add a repeatable smoke command that maintainers can run before review or release.
+
+## Install from a checkout
 
 ```sh
+git clone https://github.com/rogerchappel/promptcontract.git
+cd promptcontract
 npm install
+npm run build
 ```
+## CLI quickstart
 
-## Use
-
-Validate prompt files and print a Markdown report:
+Start with the built CLI help so the examples match the checked-out version:
 
 ```sh
-npx promptcontract check "prompts/**/*.md"
+node dist/cli.js --help
 ```
-
-Write a JSON report for automation:
+Run the maintained smoke fixture to exercise the main workflow end to end:
 
 ```sh
-npx promptcontract check "prompts/**/*.md" --report json --output promptcontract-report.json
+npm run smoke
 ```
 
-Prompt files must start with YAML frontmatter:
-
-```md
----
-name: release-note
-version: 1.0.0
-inputs:
-  - name: product
-outputs:
-  - format: markdown
-risks:
-  - Do not invent shipped changes.
-examples:
-  - name: normal
-    inputs:
-      product: Widget CLI
----
-Write a release note for {{product}}.
-```
-
-Exit code `0` means every matched prompt passed. Exit code `1` means the command
-failed or one or more prompt contracts have validation errors.
-
-## Verify
-
-Run the local validation script before opening a pull request:
+The smoke command currently expands to:
 
 ```sh
-bash scripts/validate.sh
+node dist/cli.js check fixtures/pass/*.md && node dist/cli.js check fixtures/fail/*.md --report json --output tmp/fail-report.json; test $? -eq 1
+```
+## Verification
+
+```sh
+npm run check
+npm test
+npm run smoke
+npm run package:smoke
+npm run release:check
 ```
 
-`scripts/validate.sh` runs the repository's standard local checks when they are defined and will also run `agent-qc ready` when `agent-qc` is installed. Missing `agent-qc` is treated as a skip, not a failure.
+## Limitations
+
+- The project is intentionally local-first; it does not manage remote credentials or upload repository contents.
+- Output schemas and CLI flags may change before a stable 1.0 release.
+- Review generated files before committing them, especially when they summarize logs, diffs, or dependency metadata.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution expectations. Changes
-should be small, reviewable, and verified before review.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Keep changes small, include a fixture or smoke case when behavior changes, and paste verification output into the pull request.
 
 ## Security
 
-See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance.
+See [SECURITY.md](SECURITY.md) for vulnerability reporting. Do not paste secrets, private tokens, or proprietary logs into issues or examples.
 
 ## License
 
