@@ -30,6 +30,7 @@ Write a release note for {{product}}.
   assert.equal(report.ok, true);
   assert.equal(report.checked, 1);
   assert.equal(report.errors, 0);
+  assert.deepEqual(report.codes, {});
 });
 
 test('checkPrompts reports undeclared placeholders and missing example inputs', async () => {
@@ -55,6 +56,8 @@ Reply to {{customer}} about ticket {{ticket_id}}.
   const codes = report.files.flatMap((file) => file.findings.map((finding) => finding.code));
 
   assert.equal(report.ok, false);
+  assert.equal(report.codes['undeclared-placeholder'], 1);
+  assert.equal(report.codes['example-missing-input'], 1);
   assert.match(codes.join(','), /undeclared-placeholder/);
   assert.match(codes.join(','), /example-missing-input/);
 });
