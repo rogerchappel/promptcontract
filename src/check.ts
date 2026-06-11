@@ -30,12 +30,19 @@ export async function checkPrompts(patterns: string[], options: CheckOptions = {
 
   const errors = results.reduce((count, result) => count + result.findings.filter((finding) => finding.severity === 'error').length, 0);
   const warnings = results.reduce((count, result) => count + result.findings.filter((finding) => finding.severity === 'warning').length, 0);
+  const codes = results
+    .flatMap((result) => result.findings)
+    .reduce<Record<string, number>>((counts, finding) => {
+      counts[finding.code] = (counts[finding.code] ?? 0) + 1;
+      return counts;
+    }, {});
 
   return {
     ok: errors === 0,
     checked: results.length,
     errors,
     warnings,
+    codes,
     files: results
   };
 }

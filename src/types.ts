@@ -54,5 +54,6 @@ export type CheckReport = {
   checked: number;
   errors: number;
   warnings: number;
+  codes: Record<string, number>;
   files: FileResult[];
 };
