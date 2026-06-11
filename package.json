@@ -13,6 +13,8 @@
   "files": [
     "dist",
     "fixtures",
+    "docs",
+    "SKILL.md",
     "README.md",
     "LICENSE",
     "SECURITY.md",

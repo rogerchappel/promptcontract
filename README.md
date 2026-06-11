@@ -24,6 +24,13 @@ Start with the built CLI help so the examples match the checked-out version:
 ```sh
 node dist/cli.js --help
 ```
+
+Create a passing sample contract for a new prompt pack:
+
+```sh
+node dist/cli.js init
+```
+
 Run the maintained smoke fixture to exercise the main workflow end to end:
 
 ```sh
