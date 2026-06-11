@@ -3,6 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { Command } from 'commander';
 import { checkPrompts } from './check.js';
+import { initPromptContract } from './init.js';
 import { renderReport, type ReportFormat } from './report.js';
 
 const program = new Command();
@@ -11,6 +12,16 @@ program
   .name('promptcontract')
   .description('Validate prompt markdown files against explicit input, output, risk, and example contracts.')
   .version('0.1.0');
+
+program
+  .command('init')
+  .option('--force', 'Overwrite the sample prompt if it already exists')
+  .description('Create a sample prompt contract under prompts/')
+  .action(async (options: { force?: boolean }) => {
+    const result = await initPromptContract({ force: options.force });
+    const status = result.created ? 'created' : 'already exists';
+    console.log(`promptcontract: ${status} ${path.relative(process.cwd(), result.promptPath)}`);
+  });
 
 program
   .command('check')
