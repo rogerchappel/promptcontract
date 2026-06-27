@@ -27,8 +27,9 @@
     "dev": "tsx src/cli.ts",
     "test": "node --test dist/**/*.test.js",
     "smoke": "node dist/cli.js check fixtures/pass/*.md && node dist/cli.js check fixtures/fail/*.md --report json --output tmp/fail-report.json; test $? -eq 1",
-    "package:smoke": "npm pack --dry-run",
-    "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke"
+    "package:smoke": "npm run build && test -f ./dist/cli.js && test -f ./dist/index.js && npm pack --dry-run",
+    "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke",
+    "prepack": "npm run build"
   },
   "keywords": [
     "prompt",
