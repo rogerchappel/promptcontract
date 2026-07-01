@@ -28,9 +28,10 @@
     "dev": "tsx src/cli.ts",
     "test": "node --test dist/**/*.test.js",
     "smoke": "node dist/cli.js check fixtures/pass/*.md && node dist/cli.js check fixtures/fail/*.md --report json --output tmp/fail-report.json; test $? -eq 1",
-    "package:smoke": "npm run build && test -f ./dist/cli.js && test -f ./dist/index.js && node scripts/verify-pack.mjs",
+    "package:smoke": "npm run build && npm run bin:smoke && npm pack --dry-run",
     "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "bin:smoke": "node -e \"const fs=require('node:fs'); const p=require('./package.json'); const bins=typeof p.bin==='string'?{[p.name]:p.bin}:p.bin||{}; for (const [name,target] of Object.entries(bins)) { if (!fs.existsSync(target)) { console.error(name + ' bin target missing: ' + target); process.exit(1); } }\""
   },
   "keywords": [
     "prompt",
