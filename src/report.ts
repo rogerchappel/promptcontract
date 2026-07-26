@@ -31,7 +31,10 @@ function renderMarkdownReport(report: CheckReport): string {
   }
 
   if (report.checked === 0) {
-    lines.push('No prompt files matched the provided patterns.', '');
+    for (const diagnostic of report.diagnostics) {
+      lines.push(`- ${diagnostic.severity.toUpperCase()} ${diagnostic.code}: ${diagnostic.message}`);
+    }
+    lines.push('');
     return lines.join('\n');
   }
 

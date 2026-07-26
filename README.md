@@ -42,6 +42,11 @@ The smoke command currently expands to:
 ```sh
 node dist/cli.js check fixtures/pass/*.md && node dist/cli.js check fixtures/fail/*.md --report json --output tmp/fail-report.json; test $? -eq 1
 ```
+
+`check` also fails when none of the supplied patterns match a prompt file. This
+guards CI against passing after a prompt directory is renamed or a glob is
+mistyped. Both report formats retain `checked: 0` and include the stable
+`no-files-matched` diagnostic; the CLI exits with status 1.
 ## Verification
 
 ```sh
