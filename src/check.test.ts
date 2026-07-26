@@ -31,6 +31,25 @@ Write a release note for {{product}}.
   assert.equal(report.checked, 1);
   assert.equal(report.errors, 0);
   assert.deepEqual(report.codes, {});
+  assert.deepEqual(report.diagnostics, []);
+});
+
+test('checkPrompts fails with an actionable diagnostic when no files match', async () => {
+  const workspace = await mkdtemp(path.join(tmpdir(), 'promptcontract-empty-'));
+
+  const report = await checkPrompts(['missing/**/*.md'], { cwd: workspace });
+
+  assert.equal(report.ok, false);
+  assert.equal(report.checked, 0);
+  assert.equal(report.errors, 1);
+  assert.equal(report.codes['no-files-matched'], 1);
+  assert.deepEqual(report.files, []);
+  assert.deepEqual(report.diagnostics, [{
+    severity: 'error',
+    code: 'no-files-matched',
+    message: 'No prompt files matched the provided patterns: missing/**/*.md',
+    path: '.'
+  }]);
 });
 
 test('checkPrompts reports undeclared placeholders and missing example inputs', async () => {
