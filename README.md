@@ -47,6 +47,16 @@ node dist/cli.js check fixtures/pass/*.md && node dist/cli.js check fixtures/fai
 guards CI against passing after a prompt directory is renamed or a glob is
 mistyped. Both report formats retain `checked: 0` and include the stable
 `no-files-matched` diagnostic; the CLI exits with status 1.
+
+Every example must provide each declared input unless that input explicitly sets
+`required: false`. Missing values produce the stable `example-missing-input`
+finding with the exact `examples[n].inputs.<name>` field. This applies even when
+the prompt body does not reference the input as a `{{placeholder}}`.
+
+Malformed YAML frontmatter is reported as `invalid-frontmatter-yaml` for the
+affected file. The scanner continues through all other matched files, so both
+Markdown and JSON reports remain complete; JSON output stays parseable and the
+CLI exits with status 1 when any file has this finding.
 ## Verification
 
 ```sh
