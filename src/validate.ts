@@ -151,9 +151,18 @@ function validatePlaceholderContract(
   }
 
   examples.forEach((example, index) => {
-    for (const placeholder of placeholders) {
-      if (!(placeholder in example.inputs)) {
-        findings.push(error(path, 'example-missing-input', `examples[${index}] is missing input "${placeholder}".`, `examples[${index}].inputs`));
+    const requiredNames = new Set(inputs.filter((input) => input.required !== false).map((input) => input.name));
+    const expectedNames = new Set([...requiredNames, ...placeholders]);
+
+    for (const inputName of expectedNames) {
+      if (!(inputName in example.inputs)) {
+        const requirement = requiredNames.has(inputName) ? 'required input' : 'input';
+        findings.push(error(
+          path,
+          'example-missing-input',
+          `examples[${index}] is missing ${requirement} "${inputName}".`,
+          `examples[${index}].inputs.${inputName}`
+        ));
       }
     }
   });

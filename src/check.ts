@@ -24,8 +24,23 @@ export async function checkPrompts(patterns: string[], options: CheckOptions = {
   for (const absolutePath of entries.sort()) {
     const source = await readFile(absolutePath, 'utf8');
     const relativePath = path.relative(cwd, absolutePath);
-    const prompt = parsePromptFile(relativePath, source);
-    results.push(validatePromptFile(prompt, source));
+    try {
+      const prompt = parsePromptFile(relativePath, source);
+      results.push(validatePromptFile(prompt, source));
+    } catch {
+      results.push({
+        path: relativePath,
+        ok: false,
+        placeholders: [],
+        findings: [{
+          severity: 'error',
+          code: 'invalid-frontmatter-yaml',
+          message: 'YAML frontmatter could not be parsed.',
+          path: relativePath,
+          field: 'frontmatter'
+        }]
+      });
+    }
   }
 
   const diagnostics = results.length === 0
