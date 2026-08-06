@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Make smoke and release checks reject missing or broken passing fixtures while
+  continuing to require the intentionally failing fixture to exit with status 1.
+
 - Make `check` fail with a `no-files-matched` diagnostic when its glob patterns
   resolve to zero prompt files.
 

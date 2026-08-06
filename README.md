@@ -40,8 +40,13 @@ npm run smoke
 The smoke command currently expands to:
 
 ```sh
-node dist/cli.js check fixtures/pass/*.md && node dist/cli.js check fixtures/fail/*.md --report json --output tmp/fail-report.json; test $? -eq 1
+node scripts/smoke.mjs
 ```
+
+The runner treats the fixtures as two separate contracts: the passing fixture
+must exit with status 0, while the intentionally failing fixture must exit with
+status 1. Any other status fails the smoke command and, consequently,
+`npm run release:check`.
 
 `check` also fails when none of the supplied patterns match a prompt file. This
 guards CI against passing after a prompt directory is renamed or a glob is
