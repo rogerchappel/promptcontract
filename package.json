@@ -46,7 +46,7 @@
     "node": ">=20"
   },
   "dependencies": {
-    "commander": "^12.1.0",
+    "commander": "^15.0.0",
     "fast-glob": "^3.3.3",
     "yaml": "^2.7.0"
   },
