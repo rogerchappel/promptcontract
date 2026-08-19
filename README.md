@@ -103,5 +103,6 @@ npm run package:smoke
 npm run release:check
 ```
 
-The package smoke uses `npm pack --dry-run` so the published file list can be reviewed without publishing.
+Each verification command can be run independently; `npm test` builds its compiled test prerequisites first.
+The package smoke uses `npm pack --dry-run --json` to inspect the published file list without publishing.
 It also verifies that required runtime files are present and compiled test artifacts are excluded from the package.
