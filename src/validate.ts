@@ -152,7 +152,8 @@ function validatePlaceholderContract(
 
   examples.forEach((example, index) => {
     const requiredNames = new Set(inputs.filter((input) => input.required !== false).map((input) => input.name));
-    const expectedNames = new Set([...requiredNames, ...placeholders]);
+    const undeclaredPlaceholders = placeholders.filter((placeholder) => !declaredInputs.has(placeholder));
+    const expectedNames = new Set([...requiredNames, ...undeclaredPlaceholders]);
 
     for (const inputName of expectedNames) {
       if (!(inputName in example.inputs)) {
