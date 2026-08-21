@@ -56,7 +56,8 @@ mistyped. Both report formats retain `checked: 0` and include the stable
 Every example must provide each declared input unless that input explicitly sets
 `required: false`. Missing values produce the stable `example-missing-input`
 finding with the exact `examples[n].inputs.<name>` field. This applies even when
-the prompt body does not reference the input as a `{{placeholder}}`.
+the prompt body does not reference a required input as a `{{placeholder}}`;
+optional inputs may be omitted even when the body does reference them.
 
 Malformed YAML frontmatter is reported as `invalid-frontmatter-yaml` for the
 affected file. The scanner continues through all other matched files, so both

@@ -81,7 +81,7 @@ Reply to {{customer}} about ticket {{ticket_id}}.
   assert.match(codes.join(','), /example-missing-input/);
 });
 
-test('checkPrompts requires every required input in each example but permits omitted optional inputs', async () => {
+test('checkPrompts requires every required input but permits omitted or supplied optional placeholders', async () => {
   const workspace = await mkdtemp(path.join(tmpdir(), 'promptcontract-required-inputs-'));
   await writeFile(path.join(workspace, 'prompt.md'), `---
 name: static-summary
@@ -97,8 +97,12 @@ risks:
 examples:
   - name: missing audience
     inputs: {}
+  - name: supplied optional tone
+    inputs:
+      audience: maintainers
+      tone: concise
 ---
-Write a static summary.
+Write a {{tone}} summary for {{audience}}.
 `);
 
   const report = await checkPrompts(['*.md'], { cwd: workspace });
