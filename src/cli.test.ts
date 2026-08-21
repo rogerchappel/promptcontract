@@ -51,3 +51,42 @@ test('check exits nonzero with parseable JSON when one matched file has malforme
   assert.equal(report.files[0]?.path, 'bad.md');
   assert.equal(report.files[0]?.findings[0]?.code, 'invalid-frontmatter-yaml');
 });
+
+test('check accepts examples that omit or supply an optional placeholder', async () => {
+  const workspace = await mkdtemp(path.join(tmpdir(), 'promptcontract-cli-optional-'));
+  await writeFile(path.join(workspace, 'prompt.md'), `---
+name: optional-audience
+version: 1.0.0
+inputs:
+  - name: audience
+    required: false
+outputs:
+  - format: markdown
+risks:
+  - Do not invent facts.
+examples:
+  - name: omitted
+    inputs: {}
+  - name: supplied
+    inputs:
+      audience: maintainers
+---
+Write for {{audience}}.
+`);
+  const result = spawnSync(process.execPath, [cliPath, 'check', '*.md', '--report', 'json'], {
+    cwd: workspace,
+    encoding: 'utf8'
+  });
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+
+  const report = JSON.parse(result.stdout) as {
+    ok: boolean;
+    errors: number;
+    codes: Record<string, number>;
+  };
+  assert.equal(report.ok, true);
+  assert.equal(report.errors, 0);
+  assert.equal(report.codes['example-missing-input'], undefined);
+});
