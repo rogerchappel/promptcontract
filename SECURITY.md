@@ -2,18 +2,12 @@
 
 ## Supported Versions
 
-Replace this section with the supported versions for `/Users/roger/Developer/my-opensource/promptcontract`.
-
-Example:
-
-```md
 | Version | Supported |
 | --- | --- |
-| .x | Yes |
-| < .0 | No |
-```
+| 0.1.x | Yes |
+| < 0.1.0 | No |
 
-If the project does not publish versioned releases yet, say that clearly.
+Only the current 0.1.x release line receives security fixes.
 
 ## Reporting a Vulnerability
 
@@ -37,13 +31,13 @@ When a private reporting path is available, include:
 
 Maintainers review good-faith reports as capacity allows.
 
-Do not imply paid support, guaranteed response times, guaranteed fixes, or service-level agreements unless `/Users/roger/Developer/my-opensource/promptcontract` explicitly provides them.
+Do not imply paid support, guaranteed response times, guaranteed fixes, or service-level agreements unless `promptcontract` explicitly provides them.
 
 ## Scope
 
 In scope:
 
-- Vulnerabilities in /Users/roger/Developer/my-opensource/promptcontract.
+- Vulnerabilities in `promptcontract`.
 - Insecure default configuration shipped by this project.
 - CI, release, or dependency guidance maintained by this project.
 
