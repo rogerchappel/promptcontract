@@ -1,4 +1,4 @@
-# /Users/roger/Developer/my-opensource/promptcontract Documentation
+# promptcontract Documentation
 
 This directory holds project documentation.
 
