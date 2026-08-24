@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { verifyPackedFiles } from './verify-pack.mjs';
@@ -15,6 +15,16 @@ const requiredPaths = [
   'SECURITY.md',
   'CHANGELOG.md',
 ];
+const repositoryRoot = new URL('../', import.meta.url);
+
+function markdownFiles(directory = repositoryRoot) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    if (entry.name === 'node_modules' || entry.name === 'dist') return [];
+    const url = new URL(entry.name + (entry.isDirectory() ? '/' : ''), directory);
+    if (entry.isDirectory()) return markdownFiles(url);
+    return entry.name.endsWith('.md') ? [url] : [];
+  });
+}
 
 test('standalone npm test builds compiled tests before running them', () => {
   assert.match(packageJson.scripts.test, /^npm run build && /);
@@ -40,4 +50,18 @@ test('package manifest verifier rejects compiled test artifacts', () => {
   assert.deepEqual(verifyPackedFiles(files).errors, [
     'Packaged compiled test artifacts: dist/cli.test.js, dist/index.test.d.ts, dist/index.test.js.map',
   ]);
+});
+
+test('public documentation uses the canonical project identity', () => {
+  const checkoutPath = ['/Users/roger/Developer/my-opensource', packageJson.name].join('/');
+  const incorrectSlug = ['users-roger-developer-my-opensource', packageJson.name].join('-');
+
+  for (const url of markdownFiles()) {
+    const content = readFileSync(url, 'utf8');
+    assert.doesNotMatch(content, new RegExp(checkoutPath.replaceAll('/', '\\/')), url.pathname);
+    assert.doesNotMatch(content, new RegExp(incorrectSlug), url.pathname);
+  }
+
+  assert.equal(packageJson.name, 'promptcontract');
+  assert.equal(packageJson.repository.url, 'git+https://github.com/rogerchappel/promptcontract.git');
 });
