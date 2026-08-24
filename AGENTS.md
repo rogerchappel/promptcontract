@@ -1,10 +1,10 @@
-# Agent Operating Instructions for /Users/roger/Developer/my-opensource/promptcontract
+# Agent Operating Instructions for promptcontract
 
-This file defines how AI agents and human maintainers should work in `/Users/roger/Developer/my-opensource/promptcontract`.
+This file defines how AI agents and human maintainers should work in `promptcontract`.
 
 ## Project Context
 
-- Project: `/Users/roger/Developer/my-opensource/promptcontract`
+- Project: `promptcontract`
 - Repository: ``
 - Primary maintainer: ``
 - Default branch: ``
@@ -86,7 +86,7 @@ Every completed task must return:
 
 ```md
 ## Review Pack
-Repo: /Users/roger/Developer/my-opensource/promptcontract
+Repo: promptcontract
 Branch:
 PR:
 Task:
@@ -172,5 +172,4 @@ Stop and ask before touching:
 Never commit secrets. Never mutate production data unless explicitly instructed.
 
 ## Repository-Specific Notes
-
 

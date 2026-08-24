@@ -27,8 +27,8 @@ format and uses semantic versioning when versioned releases are published.
 ## Release Links
 
 - Unreleased:
-  `https://github.com/rogerchappel/users-roger-developer-my-opensource-promptcontract/compare/...HEAD`
+  `https://github.com/rogerchappel/promptcontract/compare/...HEAD`
 - Latest release:
-  `https://github.com/rogerchappel/users-roger-developer-my-opensource-promptcontract/releases/latest`
+  `https://github.com/rogerchappel/promptcontract/releases/latest`
 
 Replace placeholder links once the first release tag exists.
