@@ -30,4 +30,3 @@ if (archive) {
 } else {
   process.stdout.write(`${packageJson.name}@${packageJson.version} matches ${tag}\n`);
 }
-
