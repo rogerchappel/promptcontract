@@ -29,7 +29,8 @@
     "test": "npm run build && node --test dist/**/*.test.js scripts/**/*.test.mjs",
     "smoke": "node scripts/smoke.mjs",
     "package:smoke": "npm run build && npm run bin:smoke && node scripts/verify-pack.mjs",
-    "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke",
+    "release:contract": "node --test scripts/release-contract.test.mjs",
+    "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke && npm run release:contract",
     "prepack": "npm run build",
     "bin:smoke": "node -e \"const fs=require('node:fs'); const p=require('./package.json'); const bins=typeof p.bin==='string'?{[p.name]:p.bin}:p.bin||{}; for (const [name,target] of Object.entries(bins)) { if (!fs.existsSync(target)) { console.error(name + ' bin target missing: ' + target); process.exit(1); } }\""
   },
