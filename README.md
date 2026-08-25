@@ -107,3 +107,5 @@ npm run release:check
 Each verification command can be run independently; `npm test` builds its compiled test prerequisites first.
 The package smoke uses `npm pack --dry-run --json` to inspect the published file list without publishing.
 It also verifies that required runtime files are present and compiled test artifacts are excluded from the package.
+A release tag must exactly match the version in `package.json`; after the same checks pass, automation
+publishes the tested archive to npm with provenance before attaching it to the GitHub release.

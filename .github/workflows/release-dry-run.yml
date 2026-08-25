@@ -2,6 +2,11 @@ name: Release dry run
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Prospective v-prefixed release tag (defaults to package version)
+        required: false
+        type: string
   pull_request:
     paths:
       - releasebox.config.json
@@ -39,6 +44,14 @@ jobs:
         run: node /tmp/releasebox/bin/releasebox.js check .
       - name: Run release checks
         run: npm run release:check
+      - name: Validate prospective release
+        env:
+          REQUESTED_TAG: ${{ inputs.release_tag }}
+        run: |
+          release_tag="${REQUESTED_TAG:-v$(node -p "require('./package.json').version")}"
+          node scripts/validate-release.mjs "$release_tag"
+          archive="$(npm pack --json | node -e "let data=''; process.stdin.on('data', chunk => data += chunk).on('end', () => process.stdout.write(JSON.parse(data)[0].filename))")"
+          node scripts/validate-release.mjs "$release_tag" "$archive"
       - name: Release notes preview
         run: |
           node /tmp/releasebox/bin/releasebox.js notes . > release-notes-preview.md
