@@ -7,6 +7,7 @@
 4. After pushing, use GitHub checks to confirm the release dry-run and repository hygiene workflows pass.
 
 ## Release handoff
-- Treat npm publishing and tagging as manual maintainer actions.
+- Treat tagging as a manual maintainer action. A matching version tag runs the verified npm publish and
+  GitHub release sequence automatically; do not publish the package separately.
 - Include verification evidence in pull requests so release reviewers can reproduce the checks.
 - Prefer follow-up PRs for runtime or fixture changes that are not directly tied to release readiness.
