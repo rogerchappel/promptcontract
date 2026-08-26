@@ -1,17 +1,21 @@
 #!/usr/bin/env node
 import { mkdir, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { Command } from 'commander';
 import { checkPrompts } from './check.js';
 import { initPromptContract } from './init.js';
 import { renderReport, type ReportFormat } from './report.js';
 
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json') as { version: string };
+
 const program = new Command();
 
 program
   .name('promptcontract')
   .description('Validate prompt markdown files against explicit input, output, risk, and example contracts.')
-  .version('0.1.0');
+  .version(version);
 
 program
   .command('init')
