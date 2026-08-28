@@ -16,6 +16,8 @@ format and uses semantic versioning when versioned releases are published.
 
 ### Changed
 
+- Reject non-boolean input requirements, unsupported contract fields, and
+  undeclared example inputs with stable codes and exact diagnostic paths.
 - Exclude compiled test artifacts from the published package contents.
 - Smoke and release checks reject missing or broken passing fixtures while
   continuing to require the intentionally failing fixture to exit with status 1.
