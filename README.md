@@ -3,6 +3,8 @@ Local-first prompt contract lint and validation CLI.
 ## Status
 
 This is a v0.1.0 local-first developer tool. Treat the CLI and output formats as early-stage, pin versions in automation, and run the verification commands below before relying on it in CI.
+
+The supported runtime floor is Node.js 20. CI runs the complete release checks on Node.js 20, 22, and 24.
 ## What it helps with
 
 - Work with prompt, lint, cli, contracts, ai workflows from a local checkout.
