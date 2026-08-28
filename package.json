@@ -26,7 +26,7 @@
     "build": "tsc",
     "check": "tsc --noEmit",
     "dev": "tsx src/cli.ts",
-    "test": "npm run build && node --test dist/**/*.test.js scripts/**/*.test.mjs",
+    "test": "npm run build && node --test dist/*.test.js scripts/*.test.mjs",
     "smoke": "node scripts/smoke.mjs",
     "package:smoke": "npm run build && npm run bin:smoke && node scripts/verify-pack.mjs",
     "release:contract": "node --test scripts/release-contract.test.mjs",
