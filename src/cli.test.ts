@@ -90,3 +90,46 @@ Write for {{audience}}.
   assert.equal(report.errors, 0);
   assert.equal(report.codes['example-missing-input'], undefined);
 });
+
+test('check exits nonzero and preserves schema finding paths in Markdown and JSON', async () => {
+  const workspace = await mkdtemp(path.join(tmpdir(), 'promptcontract-cli-schema-'));
+  await writeFile(path.join(workspace, 'prompt.md'), `---
+name: invalid-required
+version: 1.0.0
+inputs:
+  - name: audience
+    required: "false"
+outputs:
+  - format: markdown
+risks:
+  - Do not invent facts.
+examples:
+  - name: invalid input
+    inputs:
+      audience: maintainers
+      surprise: ignored
+---
+Write for {{audience}}.
+`);
+
+  const jsonResult = spawnSync(process.execPath, [cliPath, 'check', '*.md', '--report', 'json'], {
+    cwd: workspace,
+    encoding: 'utf8'
+  });
+  const markdownResult = spawnSync(process.execPath, [cliPath, 'check', '*.md'], {
+    cwd: workspace,
+    encoding: 'utf8'
+  });
+
+  assert.equal(jsonResult.status, 1);
+  assert.equal(markdownResult.status, 1);
+  const report = JSON.parse(jsonResult.stdout) as {
+    files: Array<{ findings: Array<{ code: string; field?: string }> }>;
+  };
+  assert.deepEqual(report.files[0]?.findings.map(({ code, field }) => ({ code, field })), [
+    { code: 'invalid-input-required', field: 'inputs[0].required' },
+    { code: 'undeclared-example-input', field: 'examples[0].inputs.surprise' }
+  ]);
+  assert.match(markdownResult.stdout, /invalid-input-required \(inputs\[0\]\.required\)/);
+  assert.match(markdownResult.stdout, /undeclared-example-input \(examples\[0\]\.inputs\.surprise\)/);
+});
