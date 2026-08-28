@@ -11,6 +11,8 @@ export function validatePromptFile(prompt: PromptFile, source: string): FileResu
     findings.push(error(prompt.path, 'missing-frontmatter', 'Prompt file must start with YAML frontmatter delimited by --- markers.'));
   }
 
+  reportUnsupportedFields(contract, ['name', 'version', 'description', 'inputs', 'outputs', 'risks', 'examples'], prompt.path, '', 'unsupported-contract-field', 'contract', findings);
+
   if (!isNonEmptyString(contract.name)) {
     findings.push(error(prompt.path, 'missing-name', 'Contract must declare a non-empty name.', 'name'));
   }
@@ -61,6 +63,12 @@ function readInputs(value: unknown, path: string, findings: Finding[]): Contract
       return;
     }
 
+    reportUnsupportedFields(item, ['name', 'required', 'description'], path, `inputs[${index}].`, 'unsupported-input-field', 'input', findings);
+
+    if (item.required !== undefined && typeof item.required !== 'boolean') {
+      findings.push(error(path, 'invalid-input-required', `inputs[${index}].required must be a boolean when provided.`, `inputs[${index}].required`));
+    }
+
     if (seen.has(item.name)) {
       findings.push(error(path, 'duplicate-input', `Input "${item.name}" is declared more than once.`, `inputs[${index}].name`));
     }
@@ -86,6 +94,8 @@ function readOutputs(value: unknown, path: string, findings: Finding[]): Contrac
       findings.push(error(path, 'invalid-output', `outputs[${index}] must include a non-empty format.`, `outputs[${index}].format`));
       return [];
     }
+
+    reportUnsupportedFields(item, ['format', 'description'], path, `outputs[${index}].`, 'unsupported-output-field', 'output', findings);
 
     return [{
       format: item.format,
@@ -120,6 +130,8 @@ function readExamples(value: unknown, path: string, findings: Finding[]): Contra
       return [];
     }
 
+    reportUnsupportedFields(item, ['name', 'inputs', 'output'], path, `examples[${index}].`, 'unsupported-example-field', 'example', findings);
+
     return [{
       name: item.name,
       inputs: item.inputs,
@@ -151,6 +163,12 @@ function validatePlaceholderContract(
   }
 
   examples.forEach((example, index) => {
+    for (const inputName of Object.keys(example.inputs)) {
+      if (!declaredInputs.has(inputName)) {
+        findings.push(error(path, 'undeclared-example-input', `examples[${index}] provides undeclared input "${inputName}".`, `examples[${index}].inputs.${inputName}`));
+      }
+    }
+
     const requiredNames = new Set(inputs.filter((input) => input.required !== false).map((input) => input.name));
     const undeclaredPlaceholders = placeholders.filter((placeholder) => !declaredInputs.has(placeholder));
     const expectedNames = new Set([...requiredNames, ...undeclaredPlaceholders]);
@@ -167,6 +185,23 @@ function validatePlaceholderContract(
       }
     }
   });
+}
+
+function reportUnsupportedFields(
+  value: Record<string, unknown>,
+  allowedFields: string[],
+  path: string,
+  fieldPrefix: string,
+  code: string,
+  objectName: string,
+  findings: Finding[]
+): void {
+  const allowed = new Set(allowedFields);
+  for (const field of Object.keys(value)) {
+    if (!allowed.has(field)) {
+      findings.push(error(path, code, `Unsupported ${objectName} field "${field}".`, `${fieldPrefix}${field}`));
+    }
+  }
 }
 
 function error(path: string, code: string, message: string, field?: string): Finding {
