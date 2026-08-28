@@ -59,6 +59,19 @@ finding with the exact `examples[n].inputs.<name>` field. This applies even when
 the prompt body does not reference a required input as a `{{placeholder}}`;
 optional inputs may be omitted even when the body does reference them.
 
+Contract frontmatter accepts `name`, `version`, `description`, `inputs`,
+`outputs`, `risks`, and `examples`. Input objects accept `name`, `required`, and
+`description`; output objects accept `format` and `description`; example objects
+accept `name`, `inputs`, and `output`. The optional `required` field must be a
+YAML boolean, not a quoted string. Example input names must also be declared in
+the top-level `inputs` array.
+
+Schema violations use stable finding codes with exact field paths in Markdown
+and JSON reports: `invalid-input-required`, `unsupported-contract-field`,
+`unsupported-input-field`, `unsupported-output-field`,
+`unsupported-example-field`, and `undeclared-example-input`. Any of these
+errors makes the CLI exit with status 1.
+
 Malformed YAML frontmatter is reported as `invalid-frontmatter-yaml` for the
 affected file. The scanner continues through all other matched files, so both
 Markdown and JSON reports remain complete; JSON output stays parseable and the
