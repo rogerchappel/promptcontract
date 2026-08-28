@@ -116,6 +116,45 @@ Write a {{tone}} summary for {{audience}}.
   assert.doesNotMatch(JSON.stringify(report), /missing input "tone"/);
 });
 
+test('checkPrompts reports exact paths for unsupported fields and invalid schema values', async () => {
+  const workspace = await mkdtemp(path.join(tmpdir(), 'promptcontract-schema-'));
+  await writeFile(path.join(workspace, 'prompt.md'), `---
+name: schema-errors
+version: 1.0.0
+unknown_root: true
+inputs:
+  - name: audience
+    required: "false"
+    typo: ignored
+outputs:
+  - format: markdown
+    typo: ignored
+risks:
+  - Do not invent facts.
+examples:
+  - name: malformed
+    typo: ignored
+    inputs:
+      audience: maintainers
+      surprise: ignored
+---
+Write for {{audience}}.
+`);
+
+  const report = await checkPrompts(['*.md'], { cwd: workspace });
+  const findings = report.files[0]?.findings.map(({ code, field }) => ({ code, field }));
+
+  assert.equal(report.ok, false);
+  assert.deepEqual(findings, [
+    { code: 'unsupported-contract-field', field: 'unknown_root' },
+    { code: 'unsupported-input-field', field: 'inputs[0].typo' },
+    { code: 'invalid-input-required', field: 'inputs[0].required' },
+    { code: 'unsupported-output-field', field: 'outputs[0].typo' },
+    { code: 'unsupported-example-field', field: 'examples[0].typo' },
+    { code: 'undeclared-example-input', field: 'examples[0].inputs.surprise' }
+  ]);
+});
+
 test('checkPrompts reports malformed YAML per file and continues checking matched files', async () => {
   const workspace = await mkdtemp(path.join(tmpdir(), 'promptcontract-malformed-yaml-'));
   await writeFile(path.join(workspace, 'bad.md'), `---
