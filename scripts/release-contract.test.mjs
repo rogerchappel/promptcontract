@@ -37,3 +37,20 @@ test('dry run validates a prospective tag and packed contents without publishing
   assert.match(workflow, /npm pack/);
   assert.doesNotMatch(workflow, /npm publish/);
 });
+
+test('CI tests every supported Node major from the package engine floor', () => {
+  const workflow = readFileSync('.github/workflows/ci.yml', 'utf8');
+  const engineFloor = Number(pkg.engines.node.match(/\d+/)?.[0]);
+  const nodeVersions = workflow
+    .match(/node-version:\s*\[([^\]]+)\]/)?.[1]
+    .split(',')
+    .map((version) => Number(version.trim()));
+
+  assert.equal(engineFloor, 20);
+  assert.deepEqual(nodeVersions, [20, 22, 24]);
+  assert.match(workflow, /uses: actions\/setup-node@v\d+/);
+  assert.match(workflow, /node-version:\s*\$\{\{ matrix\.node-version \}\}/);
+  assert.match(workflow, /cache:\s*npm/);
+  assert.match(workflow, /run:\s*npm ci/);
+  assert.match(workflow, /run:\s*npm run release:check/);
+});
